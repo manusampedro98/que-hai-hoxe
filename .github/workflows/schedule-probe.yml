@@ -1,0 +1,15 @@
+name: Prueba temporal del disparador
+on:
+  schedule:
+    - cron: '3-58/5 * * * *'
+permissions: {}
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Registrar el disparo de GitHub
+        run: |
+          test "$GITHUB_EVENT_NAME" = schedule
+          printf 'event=%s\n' "$GITHUB_EVENT_NAME"
+          date -u '+run_time_utc=%Y-%m-%dT%H:%M:%SZ'
