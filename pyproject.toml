@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools==84.2.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "que-hai-hoxe"
+version = "0.1.0"
+description = "Radar local y de solo lectura de eventos de Galicia"
+requires-python = ">=3.12"
+dependencies = ["fastapi==0.162.0", "uvicorn==0.54.0", "SQLAlchemy==2.1.6", "Jinja2==3.1.6", "tzdata==2026.6", "httpx==0.28.1"]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0"]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/js/*.mjs", "static/icons/*.svg", "static/vendor/leaflet/*", "static/vendor/leaflet/images/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "--basetemp=.test-temp"

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title if event else 'Evento no encontrado' }} · Que Hai Hoxe?{% endblock %}
+{% block content %}
+<a href="{{ site_root|default('/') }}" class="back" id="back">← Volver a los resultados</a>
+{% if event %}
+<article class="detail"><p class="eyebrow">{{ categories[event.category] }}</p><h1>{{ event.title }}</h1>
+{% if event.status != 'scheduled' %}<p class="state">{{ statuses[event.status] }}{% if event.status == 'postponed' %} · {% if not event.original_start_date or event.original_start_date == event.date.start_date %}Nueva fecha pendiente{% else %}Nueva fecha confirmada{% endif %}{% endif %}</p>{% endif %}
+<p class="detail-date"><time datetime="{{ event.date.starts_at or event.date.start_date }}">{{ date_label(event) }}</time></p>
+{% if event.original_start_date %}<p>Fecha original: {{ event.original_start_date }}</p>{% endif %}
+<p>{{ event.venue.municipality or 'Ubicación no disponible' }}{% if event.venue.name %} · {{ event.venue.name }}{% endif %}</p>
+{% if event.venue.address %}<p>{{ event.venue.address }}</p>{% endif %}
+<div class="detail-price"><span class="price">{{ price_label(event.price) }}</span>{% if event.price.type == 'unknown' %}<span>Precio no disponible</span>{% endif %}</div>
+{% if not static_site %}<h2>Sobre este plan</h2><p class="description">{{ event.description or 'Descripción no disponible.' }}</p>{% endif %}
+<section class="provenance"><h2>Información de origen</h2><p>{{ event.source.name }}</p><p>Última verificación: {{ event.last_verified_at or 'Sin verificación real; datos de demostración' if demo else event.last_verified_at or 'No disponible' }}</p>
+{% if static_site and event.source_updated_at %}<p>Última actualización indicada por la fuente: <time>{{ event.source_updated_at }}</time></p>{% endif %}
+{% if event.source.name == 'Fonte dos datos: Xunta de Galicia · Axenda Cultura Galicia' %}<p>Datos normalizados a texto, categorías y fechas locales. <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>. Sin patrocinio oficial.</p>{% endif %}
+{% if event.source.url %}<a class="button" href="{{ event.source.url }}" target="_blank" rel="noopener noreferrer">Ver información oficial ↗</a>{% endif %}
+{% if event.tickets_url and event.status == 'scheduled' %}<a class="button secondary" href="{{ event.tickets_url }}" target="_blank" rel="noopener noreferrer">Ver entradas ↗</a>{% endif %}</section>
+</article>
+{% else %}<section class="empty"><h1>Evento no encontrado</h1><p>Puede que el enlace no sea correcto.</p><a class="button" href="{{ site_root|default('/') }}">Explorar eventos</a></section>{% endif %}
+{% endblock %}

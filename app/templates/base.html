@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es"{% if static_site %} data-site-root="{{ site_root }}"{% endif %}>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  {% if static_site %}<meta http-equiv="Content-Security-Policy" content="{{ static_csp }}"><meta name="referrer" content="no-referrer">{% endif %}
+  <title>{% block title %}Que Hai Hoxe? · Radar de eventos de Galicia{% endblock %}</title>
+  <link rel="icon" href="{{ site_root|default('/') }}static/icons/radar.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ site_root|default('/') }}static/css/app.css">
+  <script type="module" src="{{ site_root|default('/') }}static/js/app.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<div class="shell">
+  <header class="brand"><a href="{{ site_root|default('/') }}" aria-label="Que Hai Hoxe? Inicio"><img src="{{ site_root|default('/') }}static/icons/radar.svg" alt="" width="48" height="48"><span>QUE HAI HOXE<span class="coral">?</span></span></a><p>Radar de eventos de Galicia</p><span class="local-tag">{% if static_site %}AGENDA ABIERTA · SIN REGISTRO{% else %}EN TU RED · SIN REGISTRO{% endif %}</span></header>
+  {% if demo %}<aside class="demo-banner"><strong>Datos de demostración</strong><span>Eventos, fechas y precios ficticios. No es una agenda real.</span></aside>{% endif %}
+  <main id="main">{% block content %}{% endblock %}</main>
+  <footer><span>Que Hai Hoxe? <span class="coral">↗</span> Un plan cerca de ti.</span>{% if static_site %}<a href="{{ site_root }}creditos/">Fuentes y privacidad</a>{% else %}<span>Catálogo local · Consulta de solo lectura</span>{% endif %}</footer>
+</div>
+</body></html>

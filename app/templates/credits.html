@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Fuentes y privacidad · Que Hai Hoxe?{% endblock %}
+{% block content %}
+<article class="detail">
+  <h1>Fuentes y privacidad</h1>
+  <section class="provenance">
+    <h2>Agenda</h2>
+    <p>Fuente de los datos: <a href="https://abertos.xunta.gal">Xunta de Galicia</a> · <a href="{{ dataset_url }}">Axenda de Cultura de Galicia</a>. Última consulta correcta: <time datetime="{{ imported_at }}">{{ imported_label }}</time>. Cada ficha indica la fecha de actualización que facilita la fuente cuando está disponible.</p>
+    <p>El <a href="{{ site_root }}eventos.json">catálogo exportado</a> se distribuye bajo <a href="{{ license_url }}">CC BY-SA 4.0</a>. Seleccionamos los campos de agenda, normalizamos fechas y categorías y comprobamos las posiciones contra el directorio oficial de espacios. Cuando el nombre del recinto es una dirección, mostramos el municipio. Las fichas enlazan al evento original. Que Hai Hoxe? es un proyecto independiente.</p>
+    <p><a href="https://abertos.xunta.gal/es/condicions-de-uso">Condiciones de reutilización de Abert@s</a></p>
+  </section>
+  <section class="provenance">
+    <h2>Mapa y privacidad</h2>
+    <p>La búsqueda se procesa en tu navegador. Los filtros y la posición de lectura se guardan durante la sesión de la pestaña. La aplicación funciona sin cuentas, formularios ni analítica propia.</p>
+    <p>En la publicación de GitHub Pages, GitHub registra la IP de las visitas para seguridad. <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">Política de privacidad de GitHub</a>.</p>
+    <p>Al activar el mapa, el IGN recibe la IP y el área visualizada para servir las teselas. Cartografía <a href="https://www.ign.es/resources/licencia/Condiciones_licenciaUso_IGN.pdf">CC BY 4.0 scne.es · IGN</a>. <a href="{{ site_root }}static/vendor/leaflet/LICENSE">Licencia BSD de Leaflet</a>.</p>
+  </section>
+</article>
+{% endblock %}
