@@ -63,6 +63,8 @@ if ($("#cards")) {
   let data,
     fetched = 0,
     fetchedDay,
+    loading = false,
+    retryAfter = 0,
     serverOffset = 0;
   $("#search").value = state.q;
   const mapView = createMapView({
@@ -155,6 +157,7 @@ if ($("#cards")) {
     $("#range").textContent =
       `Del ${a.split("-").reverse().join("/")} al ${b.split("-").reverse().join("/")} (fin excluido) · Europe/Madrid`;
     $("#status").replaceChildren();
+    if (retryAfter) showLoadError();
     if (!events.length) {
       const box = element("div", undefined, "empty");
       box.append(
@@ -197,11 +200,27 @@ if ($("#cards")) {
     $("#municipality").value = "";
     render();
   }
+  function showLoadError() {
+    const box = element("div", undefined, "empty");
+    box.append(
+      element("h3", data ? "No se pudo actualizar el catálogo" : "No se pudo cargar el catálogo"),
+      element("p", data
+        ? "Sigues viendo la última descarga correcta. Se reintentará automáticamente."
+        : publicRoot ? "Se reintentará automáticamente." : "Comprueba que el servidor está encendido y que la base está inicializada."),
+    );
+    const retry = element("button", "Reintentar", "button");
+    retry.onclick = load;
+    box.append(retry);
+    $("#status").append(box);
+  }
   async function load() {
+    if (loading) return;
+    loading = true;
+    const previous = data;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 15000);
     $("#cards").setAttribute("aria-busy", "true");
-    $("#status").textContent = publicRoot ? "Cargando catálogo…" : "Cargando catálogo local…";
+    if (!data) $("#status").textContent = publicRoot ? "Cargando catálogo…" : "Cargando catálogo local…";
     try {
       const response = await fetch(publicRoot ? `${home}eventos.json` : "/api/events", {
         signal: controller.signal,
@@ -211,6 +230,7 @@ if ($("#cards")) {
       const payload = await response.json();
       if (!Array.isArray(payload.events)) throw Error("schema");
       data = payload;
+      retryAfter = 0;
       fetched = Date.now();
       serverOffset = publicRoot ? 0 : new Date(data.server_now).getTime() - Date.now();
       fetchedDay = localDay(new Date(fetched + serverOffset));
@@ -232,24 +252,18 @@ if ($("#cards")) {
         storage.set("qhh-scroll", "0");
       }
     } catch {
-      data = null;
-      mapView.update([], false);
-      $("#cards").replaceChildren();
-      $("#results-title").textContent = "Catálogo no disponible";
-      $("#status").replaceChildren();
-      const box = element("div", undefined, "empty");
-      box.append(
-        element("h3", "No se pudo cargar el catálogo"),
-        element(
-          "p",
-          publicRoot ? "Vuelve a intentarlo en unos segundos." : "Comprueba que el servidor está encendido y que la base está inicializada.",
-        ),
-      );
-      const retry = element("button", "Reintentar", "button");
-      retry.onclick = load;
-      box.append(retry);
-      $("#status").append(box);
+      data = previous;
+      retryAfter = Date.now() + 60000;
+      if (data) render();
+      else {
+        mapView.update([], false);
+        $("#cards").replaceChildren();
+        $("#results-title").textContent = "Catálogo no disponible";
+        $("#status").replaceChildren();
+        showLoadError();
+      }
     } finally {
+      loading = false;
       clearTimeout(timer);
       $("#cards").setAttribute("aria-busy", "false");
     }
@@ -279,12 +293,10 @@ if ($("#cards")) {
     });
   $("#clear").onclick = clear;
   const refresh = () => {
-    if (
-      data &&
-      (localDay(new Date(Date.now() + serverOffset)) !== fetchedDay ||
-        Date.now() - fetched > 900000)
-    )
-      load();
+    if (retryAfter) {
+      if (Date.now() >= retryAfter) load();
+    } else if (localDay(new Date(Date.now() + serverOffset)) !== fetchedDay ||
+               Date.now() - fetched >= 900000) load();
   };
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) refresh();

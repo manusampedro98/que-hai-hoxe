@@ -30,7 +30,7 @@ node tests/frontend.mjs
 
 ## Catálogo público y actualización
 
-La configuración de GitHub Pages usa **GitHub Actions** como origen. El flujo está preparado para regenerar y desplegar a las 06:23 UTC cada día. También se puede lanzar desde **Actions → Actualizar y publicar el radar → Run workflow**. El primer despliegue se lanza manualmente tras habilitar Pages. Los errores de origen, generación o auditoría detienen el flujo y conservan el último despliegue correcto.
+GitHub Actions consulta la Xunta y publica el catálogo a partir de las 06:23 UTC cada día. A las 10:47, 14:47 y 20:47 UTC hay oportunidades de recuperación. En esos horarios el flujo consulta la fecha de importación del JSON público. Si acredita una publicación posterior o igual a la cita del día, termina ahí. Si falta o no se puede comprobar, vuelve a generar y auditar el catálogo. Un error de origen, generación o auditoría conserva la última publicación correcta. También puedes iniciar la actualización desde **Actions → Actualizar y publicar el radar → Run workflow**.
 
 La edición pública parte del servicio oficial de la Xunta. La página de fuentes indica cuándo se consultó y las fichas conservan la actualización indicada por el proveedor. GitHub puede retrasar ejecuciones programadas y desactivarlas tras 60 días de inactividad de un repositorio público. La ejecución manual permite actualizar el catálogo cuando haga falta. [Programación en GitHub Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)
 
