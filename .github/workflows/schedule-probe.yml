@@ -2,6 +2,8 @@ name: Prueba temporal del disparador
 on:
   schedule:
     - cron: '3-58/5 * * * *'
+    - cron: '4-59/5 7-8 * * *'
+      timezone: Europe/Madrid
 permissions: {}
 jobs:
   probe:
@@ -9,7 +11,10 @@ jobs:
     timeout-minutes: 2
     steps:
       - name: Registrar el disparo de GitHub
+        env:
+          PROBE_SCHEDULE: ${{ github.event.schedule }}
         run: |
           test "$GITHUB_EVENT_NAME" = schedule
+          printf 'cron=%s\n' "$PROBE_SCHEDULE"
           printf 'event=%s\n' "$GITHUB_EVENT_NAME"
           date -u '+run_time_utc=%Y-%m-%dT%H:%M:%SZ'
